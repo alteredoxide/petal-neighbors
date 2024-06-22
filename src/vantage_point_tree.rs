@@ -17,7 +17,7 @@ pub struct VantagePointTree<'a, A, M> {
 
 impl<'a, A> VantagePointTree<'a, A, distance::Euclidean>
 where
-    A: Float + FloatCore + Zero + AddAssign + 'a,
+    A: Float + FloatCore + Zero + AddAssign + Send + Sync + 'a,
 {
     /// Builds a vantage point tree with a euclidean distance metric.
     ///
@@ -36,7 +36,7 @@ where
 
 impl<'a, A, M> VantagePointTree<'a, A, M>
 where
-    A: FloatCore + Zero + AddAssign + 'a,
+    A: FloatCore + Zero + AddAssign + Send + Sync + 'a,
     M: Metric<A>,
 {
     /// Builds a vantage point tree using the given distance metric.

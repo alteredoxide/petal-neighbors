@@ -19,7 +19,7 @@ unsafe impl Sync for Euclidean {}
 
 impl<A> Metric<A> for Euclidean
 where
-    A: Float + Zero + AddAssign,
+    A: Float + Zero + AddAssign + Send + Sync,
 {
     /// Euclidean distance metric.
     fn distance(&self, x1: &ArrayView1<A>, x2: &ArrayView1<A>) -> A {

@@ -23,7 +23,7 @@ where
 
 impl<'a, A, M> BallTree<'a, A, M>
 where
-    A: FloatCore + Zero + AddAssign + DivAssign + FromPrimitive,
+    A: FloatCore + Zero + AddAssign + DivAssign + FromPrimitive + Send + Sync,
     M: Metric<A>,
 {
     /// Builds a ball tree using the given distance metric.
@@ -354,7 +354,7 @@ where
 
 impl<'a, A> BallTree<'a, A, Euclidean>
 where
-    A: FloatCore + Float + Zero + AddAssign + DivAssign + FromPrimitive,
+    A: FloatCore + Float + Zero + AddAssign + DivAssign + FromPrimitive + Send + Sync,
 {
     /// Builds a ball tree with a euclidean distance metric.
     ///
