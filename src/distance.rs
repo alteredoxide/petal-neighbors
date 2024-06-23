@@ -16,7 +16,9 @@ pub trait Metric<A>: Send + Sync {
 #[derive(Default, Clone, Debug, Eq, PartialEq)]
 pub struct Euclidean {}
 
+
 unsafe impl Sync for Euclidean {}
+
 
 impl<A> Metric<A> for Euclidean
 where
@@ -54,6 +56,7 @@ where
     }
 }
 
+
 pub fn pairwise<A: Float + Zero + AddAssign>(
     x: ArrayView2<A>,
     metric: &dyn Metric<A>,
@@ -71,6 +74,7 @@ pub fn pairwise<A: Float + Zero + AddAssign>(
     }
     distances
 }
+
 
 #[cfg(test)]
 mod test {
