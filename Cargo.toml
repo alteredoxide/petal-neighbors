@@ -18,7 +18,7 @@ exclude = ["./github"]
 codecov = { repository = "petabi/petal-neighbors", service = "github" }
 
 [dependencies]
-ndarray = { version = "0.15.6", features = ["approx", "blas", "rayon", "serde"] }
+ndarray = { version = "0.15.6", features = ["approx", "rayon", "serde"] }
 num-traits = "0.2"
 ordered-float = "4"
 thiserror = "1"
