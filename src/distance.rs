@@ -5,12 +5,13 @@ use num_traits::{Float, Zero};
 use std::ops::AddAssign;
 
 /// The type of a distance metric function.
-pub trait Metric<A> {
+pub trait Metric<A>: Send + Sync {
     fn distance(&self, _: &ArrayView1<A>, _: &ArrayView1<A>) -> A;
     fn rdistance(&self, _: &ArrayView1<A>, _: &ArrayView1<A>) -> A;
     fn rdistance_to_distance(&self, _: A) -> A;
     fn distance_to_rdistance(&self, _: A) -> A;
 }
+
 
 #[derive(Default, Clone, Debug, Eq, PartialEq)]
 pub struct Euclidean {}
