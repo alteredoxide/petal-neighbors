@@ -7,6 +7,7 @@ use std::ops::AddAssign;
 /// The type of a distance metric function.
 pub trait Metric<A>: Send + Sync {
     fn distance(&self, _: &ArrayView1<A>, _: &ArrayView1<A>) -> A;
+    // Reduced distance, i.e. the square of the distance for euclidean distance.
     fn rdistance(&self, _: &ArrayView1<A>, _: &ArrayView1<A>) -> A;
     fn rdistance_to_distance(&self, _: A) -> A;
     fn distance_to_rdistance(&self, _: A) -> A;
@@ -14,43 +15,55 @@ pub trait Metric<A>: Send + Sync {
 
 
 #[derive(Default, Clone, Debug, Eq, PartialEq)]
+pub struct CityBlock {}
+
+
+#[derive(Default, Clone, Debug, Eq, PartialEq)]
 pub struct Euclidean {}
 
 
+unsafe impl Sync for CityBlock {}
 unsafe impl Sync for Euclidean {}
+
+
+impl<A> Metric<A> for CityBlock
+where
+    A: Float + Zero + AddAssign,
+{
+    fn distance(&self, x1: &ArrayView1<A>, x2: &ArrayView1<A>) -> A {
+        (x1 - x2).mapv(|x| x.abs()).sum()
+    }
+
+    fn rdistance(&self, x1: &ArrayView1<A>, x2: &ArrayView1<A>) -> A {
+        self.distance(x1, x2)
+    }
+
+    fn rdistance_to_distance(&self, d: A) -> A {
+        d
+    }
+
+    fn distance_to_rdistance(&self, d: A) -> A {
+        d
+    }
+}
 
 
 impl<A> Metric<A> for Euclidean
 where
-    A: Float + Zero + AddAssign + Send + Sync,
+    A: Float + Zero + AddAssign,
 {
-    /// Euclidean distance metric.
     fn distance(&self, x1: &ArrayView1<A>, x2: &ArrayView1<A>) -> A {
-        x1.iter()
-            .zip(x2.iter())
-            .fold(A::zero(), |mut sum, (&v1, &v2)| {
-                let diff = v1 - v2;
-                sum += diff * diff;
-                sum
-            })
-            .sqrt()
+        (x1 - x2).mapv(|x| x.powi(2)).sum().sqrt()
     }
-    /// Euclidean reduce distance metric.
+
     fn rdistance(&self, x1: &ArrayView1<A>, x2: &ArrayView1<A>) -> A {
-        x1.iter()
-            .zip(x2.iter())
-            .fold(A::zero(), |mut sum, (&v1, &v2)| {
-                let diff = v1 - v2;
-                sum += diff * diff;
-                sum
-            })
+        (x1 - x2).mapv(|x| x.powi(2)).sum()
     }
-    /// Euclidean reduce distance metric.
+
     fn rdistance_to_distance(&self, d: A) -> A {
         d.sqrt()
     }
 
-    /// Euclidean reduce distance metric.
     fn distance_to_rdistance(&self, d: A) -> A {
         d.powi(2)
     }
